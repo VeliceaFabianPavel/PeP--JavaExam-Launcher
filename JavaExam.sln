@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaExam", "JavaExam\JavaExam.csproj", "{A30BD8D7-F01A-4422-911A-F61D5AFEDC57}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A30BD8D7-F01A-4422-911A-F61D5AFEDC57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A30BD8D7-F01A-4422-911A-F61D5AFEDC57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A30BD8D7-F01A-4422-911A-F61D5AFEDC57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A30BD8D7-F01A-4422-911A-F61D5AFEDC57}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {35E349CA-F4A4-4C2A-9198-014345E1D17A}
+	EndGlobalSection
+EndGlobal
