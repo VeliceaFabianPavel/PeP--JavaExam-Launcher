@@ -232,8 +232,106 @@ namespace JavaExam
 
 		private void pictureBox1_Click(object sender, EventArgs e)
 		{
-			Docker docker = new Docker();
-			docker.Close();
+			RestartExplorer();
+			Application.Exit();
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			if (MessageBox.Show("Are you really sure you want to do this?\nThe timer will continue running\nTHIS OPERATION IS IRREVERSIBLE!","WARNING",MessageBoxButtons.YesNo,MessageBoxIcon.Warning) == DialogResult.Yes)
+			{
+				string sourceFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JavaTemp");
+				string destinationFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JavaExam");
+				DeleteFolder(destinationFolderPath);
+				CopyDirectory(sourceFolderPath, destinationFolderPath);
+				try
+				{
+					Process[] processes = Process.GetProcessesByName("idea64");
+					if (processes.Length > 0)
+					{
+						foreach (var process in processes)
+						{
+							process.Kill();
+						}
+					}
+					else
+					{
+						MessageBox.Show("IntelliJ process not found.");
+					}
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show("Error killing IntelliJ process: " + ex.Message);
+				}
+				Splash2 splash2 = new Splash2();
+				splash2.Show();
+				//this.Hide();
+			}
+		}
+		private static void DeleteFolder(string folderPath)
+		{
+			try
+			{
+				// Check if the folder exists
+				if (Directory.Exists(folderPath))
+				{
+					// Delete the folder and all its contents
+					Directory.Delete(folderPath, true);
+					Console.WriteLine($"Folder deleted: {folderPath}");
+				}
+				else
+				{
+					Console.WriteLine($"Folder not found: {folderPath}");
+				}
+			}
+			catch (IOException ioEx)
+			{
+				Console.WriteLine($"Error deleting folder: {ioEx.Message}");
+			}
+			catch (UnauthorizedAccessException uaEx)
+			{
+				Console.WriteLine($"Access denied: {uaEx.Message}");
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"An error occurred: {ex.Message}");
+			}
+		}
+		private static void CopyDirectory(string sourcePath, string destinationPath)
+		{
+			// Check if the source folder exists
+			if (!Directory.Exists(sourcePath))
+			{
+				Console.WriteLine($"Source folder not found: {sourcePath}");
+				return;
+			}
+
+			// Create the destination folder if it doesn't exist
+			if (!Directory.Exists(destinationPath))
+			{
+				Directory.CreateDirectory(destinationPath);
+			}
+
+			// Copy files in the source folder to the destination folder
+			foreach (string filePath in Directory.GetFiles(sourcePath))
+			{
+				string fileName = Path.GetFileName(filePath);
+				string destFilePath = Path.Combine(destinationPath, fileName);
+				File.Copy(filePath, destFilePath, true);
+			}
+
+			// Recursively copy subfolders in the source folder to the destination folder
+			foreach (string folderPath in Directory.GetDirectories(sourcePath))
+			{
+				string folderName = Path.GetFileName(folderPath);
+				string destFolderPath = Path.Combine(destinationPath, folderName);
+				CopyDirectory(folderPath, destFolderPath);
+			}
+		}
+
+			private void button11_Click(object sender, EventArgs e)
+		{
+			UnblockWebsites();
 		}
 	}
 

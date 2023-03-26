@@ -17,3 +17,5 @@ C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.genruntimeconfig.cache
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\ref\JavaExam.dll
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.Properties.Resources.resources
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.Splash.resources
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.Splash2.resources
