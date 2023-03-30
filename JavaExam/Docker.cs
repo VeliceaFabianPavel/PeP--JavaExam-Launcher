@@ -43,7 +43,7 @@ namespace JavaExam
 			label1.Text = timeLeft.ToString(@"hh\:mm\:ss");
 			timer1.Start();
 		}
-		
+
 		private void DockAppToTop()
 		{
 			IntPtr hWndApp = FindWindow(windowName, null);// For IntelliJ: SunAwtFrame
@@ -54,7 +54,7 @@ namespace JavaExam
 			}
 			else
 			{
-				MessageBox.Show("Eclipse IDE not found. Please open Eclipse before running this application.","Error launching the Exam",MessageBoxButtons.OK,MessageBoxIcon.Stop);
+				MessageBox.Show("Eclipse IDE not found. Please open Eclipse before running this application.", "Error launching the Exam", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 				Application.Exit();
 			}
 		}
@@ -85,7 +85,7 @@ namespace JavaExam
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Error killing explorer.exe: " + ex.Message,"Internal Error",MessageBoxButtons.OK,MessageBoxIcon.Stop);
+				MessageBox.Show("Error killing explorer.exe: " + ex.Message, "Internal Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 			}
 		}
 		private void OnFormClosed(object sender, FormClosedEventArgs e)
@@ -174,6 +174,10 @@ namespace JavaExam
 	"chat.openai.com",
 	"www.telegram.com",
 	"www.signal.com",
+	"www.discord.com",
+	"www.github.com",
+	"www.reddit.com",
+	"www.twitter.com",
 	"web.snapchat.com"
 };
 
@@ -195,26 +199,26 @@ namespace JavaExam
 				MessageBox.Show("Error blocking websites: " + ex.Message);
 			}
 		}
-			private void UnblockWebsites()
+		private void UnblockWebsites()
+		{
+			try
 			{
-				try
-				{
-					var hostsContent = File.ReadAllText(HostsFilePath);
-					var lines = hostsContent.Split('\n');
+				var hostsContent = File.ReadAllText(HostsFilePath);
+				var lines = hostsContent.Split('\n');
 				hostsContent = string.Join("\n", lines.Where(line => !BlockedWebsites.Any(website => line.Contains(website))));
 
 				File.WriteAllText(HostsFilePath, hostsContent);
-				}
-				catch (Exception ex)
-				{
-				MessageBox.Show("Error unblocking websites: " + ex.Message);
-				}
 			}
-		private void timer1_Tick(object sender, EventArgs e)
+			catch (Exception ex)
 			{
+				MessageBox.Show("Error unblocking websites: " + ex.Message);
+			}
+		}
+		private void timer1_Tick(object sender, EventArgs e)
+		{
 			if (timeLeft > TimeSpan.Zero)
 			{
-				timeLeft = timeLeft.Subtract(TimeSpan.FromSeconds(1));
+				timeLeft = timeLeft.Subtract(TimeSpan.FromSeconds(3));
 				label1.Text = timeLeft.ToString(@"hh\:mm\:ss");
 			}
 			else
@@ -238,31 +242,12 @@ namespace JavaExam
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-			if (MessageBox.Show("Are you really sure you want to do this?\nThe timer will continue running\nTHIS OPERATION IS IRREVERSIBLE!","WARNING",MessageBoxButtons.YesNo,MessageBoxIcon.Warning) == DialogResult.Yes)
+			if (MessageBox.Show("Are you really sure you want to do this?\nThe timer will continue running\nTHIS OPERATION IS IRREVERSIBLE!", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
 			{
 				string sourceFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JavaTemp");
 				string destinationFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JavaExam");
 				DeleteFolder(destinationFolderPath);
 				CopyDirectory(sourceFolderPath, destinationFolderPath);
-				try
-				{
-					Process[] processes = Process.GetProcessesByName("idea64");
-					if (processes.Length > 0)
-					{
-						foreach (var process in processes)
-						{
-							process.Kill();
-						}
-					}
-					else
-					{
-						MessageBox.Show("IntelliJ process not found.");
-					}
-				}
-				catch (Exception ex)
-				{
-					MessageBox.Show("Error killing IntelliJ process: " + ex.Message);
-				}
 				Splash2 splash2 = new Splash2();
 				splash2.Show();
 				//this.Hide();
@@ -329,11 +314,10 @@ namespace JavaExam
 			}
 		}
 
-			private void button11_Click(object sender, EventArgs e)
+		private void button11_Click(object sender, EventArgs e)
 		{
 			UnblockWebsites();
 		}
 	}
 
 }
-

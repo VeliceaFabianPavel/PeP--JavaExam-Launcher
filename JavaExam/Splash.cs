@@ -76,5 +76,9 @@ namespace JavaExam
 			maximizeThread.Start();
 		}
 
+		private void pictureBox2_Click(object sender, EventArgs e)
+		{
+
+		}
 	}
 }

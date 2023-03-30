@@ -5,7 +5,6 @@ C:\Users\Fabian\source\repos\JavaExam\JavaExam\bin\Debug\net6.0-windows\JavaExam
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\bin\Debug\net6.0-windows\JavaExam.pdb
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.csproj.AssemblyReference.cache
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.Docker.resources
-C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.Form1.resources
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.csproj.GenerateResource.cache
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.AssemblyInfoInputs.cache
@@ -19,3 +18,12 @@ C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\ref\Java
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.Properties.Resources.resources
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.Splash.resources
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.Splash2.resources
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\bin\Debug\net6.0-windows\Microsoft.Win32.SystemEvents.dll
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\bin\Debug\net6.0-windows\PdfiumViewer.dll
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\bin\Debug\net6.0-windows\System.Drawing.Common.dll
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\bin\Debug\net6.0-windows\nl\PdfiumViewer.resources.dll
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\bin\Debug\net6.0-windows\runtimes\win\lib\net6.0\System.Drawing.Common.dll
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.Tutorial.resources
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.csproj.CopyComplete
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\bin\Debug\net6.0-windows\x64\pdfium.dll
