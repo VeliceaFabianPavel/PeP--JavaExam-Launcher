@@ -29,7 +29,6 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Docker));
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
 			this.button10 = new System.Windows.Forms.Button();
@@ -45,11 +44,11 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.button13 = new System.Windows.Forms.Button();
-			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.button11 = new System.Windows.Forms.Button();
+			this.brandImage = new System.Windows.Forms.PictureBox();
 			this.panel1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.brandImage)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// panel1
@@ -256,19 +255,6 @@
 			this.button13.UseVisualStyleBackColor = false;
 			this.button13.Click += new System.EventHandler(this.button13_Click);
 			// 
-			// pictureBox1
-			// 
-			this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-			this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-			this.pictureBox1.Location = new System.Drawing.Point(12, 5);
-			this.pictureBox1.Name = "pictureBox1";
-			this.pictureBox1.Size = new System.Drawing.Size(138, 35);
-			this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			this.pictureBox1.TabIndex = 6;
-			this.pictureBox1.TabStop = false;
-			this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
-			// 
 			// timer1
 			// 
 			this.timer1.Interval = 1000;
@@ -289,14 +275,24 @@
 			this.button11.UseVisualStyleBackColor = false;
 			this.button11.Click += new System.EventHandler(this.button11_Click);
 			// 
+			// brandImage
+			// 
+			this.brandImage.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("brandLogo");
+			this.brandImage.Location = new System.Drawing.Point(12, 6);
+			this.brandImage.Name = "brandImage";
+			this.brandImage.Size = new System.Drawing.Size(138, 34);
+			this.brandImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+			this.brandImage.TabIndex = 8;
+			this.brandImage.TabStop = false;
+			// 
 			// Docker
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
 			this.ClientSize = new System.Drawing.Size(1051, 220);
+			this.Controls.Add(this.brandImage);
 			this.Controls.Add(this.button11);
-			this.Controls.Add(this.pictureBox1);
 			this.Controls.Add(this.button13);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
@@ -308,7 +304,7 @@
 			this.Text = "Docker";
 			this.Load += new System.EventHandler(this.Docker_Load);
 			this.panel1.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.brandImage)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -331,8 +327,8 @@
 		private Button button10;
 		private Button button9;
 		private Button button13;
-		private PictureBox pictureBox1;
 		private System.Windows.Forms.Timer timer1;
 		private Button button11;
+		private PictureBox brandImage;
 	}
 }

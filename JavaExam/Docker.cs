@@ -218,7 +218,7 @@ namespace JavaExam
 		{
 			if (timeLeft > TimeSpan.Zero)
 			{
-				timeLeft = timeLeft.Subtract(TimeSpan.FromSeconds(3));
+				timeLeft = timeLeft.Subtract(TimeSpan.FromSeconds(1));
 				label1.Text = timeLeft.ToString(@"hh\:mm\:ss");
 			}
 			else
@@ -317,6 +317,11 @@ namespace JavaExam
 		private void button11_Click(object sender, EventArgs e)
 		{
 			UnblockWebsites();
+		}
+
+		private void pictureBox1_Click_1(object sender, EventArgs e)
+		{
+
 		}
 	}
 
