@@ -27,3 +27,6 @@ C:\Users\Fabian\source\repos\JavaExam\JavaExam\bin\Debug\net6.0-windows\runtimes
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.Tutorial.resources
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.csproj.CopyComplete
 C:\Users\Fabian\source\repos\JavaExam\JavaExam\bin\Debug\net6.0-windows\x64\pdfium.dll
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.LogIn.resources
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.FirstCheck.resources
+C:\Users\Fabian\source\repos\JavaExam\JavaExam\obj\Debug\net6.0-windows\JavaExam.Checking.resources

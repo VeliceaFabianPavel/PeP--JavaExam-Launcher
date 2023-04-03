@@ -178,6 +178,9 @@ namespace JavaExam
 	"www.github.com",
 	"www.reddit.com",
 	"www.twitter.com",
+	"www.github.com",
+	"www.tinder.com",
+	"www.viber.com",
 	"web.snapchat.com"
 };
 
