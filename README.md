@@ -1,6 +1,8 @@
 # JavaExam
-Acest proiect este momentan în lucru, așa că vor mai exista multe modificări până la varianta finală
 
-RULAȚI APLICAȚIA CA ADMINISTRATOR!
+In order for the application to compile, navigate to `JavaExam\Dependent files.zip` and move the files inside the 3 folders to the corespondent adresses. In the Local Disk C you should move the folder inside
 
-De menționat este că momentan, pentru a rula aplicația, deschideți IDE-ul: IntelliJ în format Maximized,iar abia mai apoi rulați .exe-ul din bin cu drepturi administrative, iar pentru a o închide, folosiți combinația de taste: CTRL+Shift+ESC, da-ți kill la aplicație, iar mai apoi dați: "Run New Task", și rulați Task-ul: "EXPLORER.EXE"
+## Requirements to run:
+- _Windows 10 or 11_
+- _IntelliJ IDEA Compiler - Latest version_
+- _Administrator rights_
