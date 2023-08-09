@@ -77,5 +77,10 @@ namespace JavaExam
 			splash.Show();
 			Hide();
 		}
+
+		private void pictureBox1_Click(object sender, EventArgs e)
+		{
+
+		}
 	}
 }

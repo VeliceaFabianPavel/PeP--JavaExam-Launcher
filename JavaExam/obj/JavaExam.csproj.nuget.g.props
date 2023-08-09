@@ -17,5 +17,6 @@
   </ImportGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <PkgPdfiumViewer Condition=" '$(PkgPdfiumViewer)' == '' ">C:\Users\Fabian\.nuget\packages\pdfiumviewer\2.13.0</PkgPdfiumViewer>
+    <PkgNewtonsoft_Json Condition=" '$(PkgNewtonsoft_Json)' == '' ">C:\Users\Fabian\.nuget\packages\newtonsoft.json\6.0.4</PkgNewtonsoft_Json>
   </PropertyGroup>
 </Project>

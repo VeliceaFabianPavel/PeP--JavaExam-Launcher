@@ -39,15 +39,25 @@ namespace JavaExam
 		}
 		private void OpenIntelliJWithProject()
 		{
-			string projectPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "JavaExam");
-			string intelliJPath = "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2022.3.1\\bin\\idea64.exe"; // Update this path based on your IntelliJ installation
+			string projectPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "JavaExam");
+			string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "IJPath.txt");
+			string textRead = "";
+			try
+			{
+				textRead = File.ReadAllText(filePath);
+			}
+			catch (IOException ex)
+			{
+				Console.WriteLine(ex.Message);
+			}
 
 			ProcessStartInfo psi = new ProcessStartInfo
 			{
-				FileName = intelliJPath,
+				FileName = textRead,
 				Arguments = $"\"{projectPath}\"",
 				WindowStyle = ProcessWindowStyle.Maximized
-			};
+			}; // Update this path based on your IntelliJ installation
+
 			Process.Start(psi);
 			Thread maximizeThread = new Thread(MaximizeIntelliJEditorWindow);
 			maximizeThread.Start();
@@ -56,8 +66,8 @@ namespace JavaExam
 		{
 			InitializeComponent();
 			OpenIntelliJWithProject();
-
-			System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer
+            this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("SplashLogo");
+            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer
 			{
 				Interval = 5000, // 5 seconds
 				Enabled = true
@@ -74,5 +84,10 @@ namespace JavaExam
 		{
 
 		}
-	}
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
 }

@@ -16,7 +16,9 @@ namespace JavaExam
 		public FirstCheck()
 		{
 			InitializeComponent();
-		}
+            this.pictureBox1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("SplashLogo");
+            this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("brandLogo");
+        }
 
 		private void groupBox1_Enter(object sender, EventArgs e)
 		{
@@ -71,5 +73,10 @@ namespace JavaExam
 		{
 			
 		}
-	}
+
+        private void FirstCheck_FormClosed(object sender, FormClosedEventArgs e)
+        {
+			Application.Exit();
+        }
+    }
 }

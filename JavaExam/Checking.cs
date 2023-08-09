@@ -17,6 +17,7 @@ namespace JavaExam
 {
 	public partial class Checking : Form
 	{
+		public int count = 0;
 		public static bool IsInternetConnected()
 		{
 			try
@@ -34,20 +35,26 @@ namespace JavaExam
 				return false;
 			}
 		}
-		public static bool FolderExistsInAppData(string folderName)
+		public static bool JavaExamFolderExists()
 		{
-			// Get the path to the current user's AppData folder
-			string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
 			// Combine the AppData path with the folder name
-			string folderPath = Path.Combine(appDataPath, folderName);
+			string folderPath = Path.Combine (Environment.GetFolderPath(Environment.SpecialFolder.Desktop),"JavaExam");
 
 			// Check if the folder exists
 			return Directory.Exists(folderPath);
 		}
-		
+		public static bool JavaTempFolderExists()
+		{
 
-	public static bool IsRunningWithAdminRights()
+			// Combine the AppData path with the folder name
+			string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "JavaTemp");
+
+			// Check if the folder exists
+			return Directory.Exists(folderPath);
+		}
+
+		public static bool IsRunningWithAdminRights()
 	{
 		WindowsIdentity identity = WindowsIdentity.GetCurrent();
 		WindowsPrincipal principal = new WindowsPrincipal(identity);
@@ -57,6 +64,21 @@ namespace JavaExam
 	public static bool AreTwoOrMoreScreensConnected()
 		{
 			return Screen.AllScreens.Length >= 2;
+		}
+		public static bool IsScreenDuplicated()
+		{
+			var screenBounds = Screen.AllScreens.Select(screen => screen.Bounds).ToList();
+			for (int i = 0; i < screenBounds.Count; i++)
+			{
+				for (int j = i + 1; j < screenBounds.Count; j++)
+				{
+					if (screenBounds[i].Equals(screenBounds[j]))
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 		private bool IsIntelliJInstalled()
 		{
@@ -88,19 +110,11 @@ namespace JavaExam
 
 		public void Check()
 		{
-			////Initialising
-			button6.Visible = false;
-			button5.Visible = false;
-			button4.Visible = false;
-			button3.Visible = false;
-			button2.Visible = false;
-			button1.Visible = false;
-			button7.Visible = false;
-			////
 			////Connectivity checking
 			bool isConnected = IsInternetConnected();
 			if (isConnected == true)
 			{
+				count++;
 				pictureBox1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("ok");
 			}
 			else
@@ -110,10 +124,11 @@ namespace JavaExam
 			}
 			////
 			////JavaExam folder checking
-			string folderName = "JavaExam";
-			bool folderExists = FolderExistsInAppData(folderName);
+			
+			bool folderExists = JavaExamFolderExists();
 			if (folderExists == true)
 			{
+				count++;
 				pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("ok");
 			}
 			else
@@ -123,10 +138,11 @@ namespace JavaExam
 			}
 			////
 			////JavaTemp folder checking
-			string folderName2 = "JavaTemp";
-			bool folderExists2 = FolderExistsInAppData(folderName2);
+			
+			bool folderExists2 = JavaTempFolderExists();
 			if (folderExists2 == true)
 			{
+				count++;
 				pictureBox3.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("ok");
 			}
 			else
@@ -137,8 +153,10 @@ namespace JavaExam
 			////
 			////Screens Count
 			bool twoOrMoreScreens = AreTwoOrMoreScreensConnected();
+			//bool duplicatedScreens = IsScreenDuplicated();
 			if (twoOrMoreScreens == false)
 			{
+				count++;
 				pictureBox4.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("ok");
 			}
 			else
@@ -151,6 +169,7 @@ namespace JavaExam
 			bool isAdmin = IsRunningWithAdminRights();
 			if(isAdmin==true)
 			{
+				count++;
 				pictureBox5.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("ok");
 			}
 			else
@@ -163,6 +182,7 @@ namespace JavaExam
 			bool IntelliJcheck = IsIntelliJInstalled();
 			if (IntelliJcheck==true)
 			{
+				count++;
 				pictureBox6.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("ok");
 			}
 			else
@@ -171,8 +191,8 @@ namespace JavaExam
 				button1.Visible = true;
 			}
 			////Launch exam Check
-			if (button1.Visible==false && button2.Visible==false && button3.Visible==false&&button4.Visible==false&&button5.Visible==false&&button6.Visible==false) 
-			{ 
+			if (count==6) 
+			{
 				button7.Visible = true;
 			}
 			else
@@ -183,7 +203,17 @@ namespace JavaExam
 		public Checking()
 		{
 			InitializeComponent();
+			////Initialising
+			button6.Visible = false;
+			button5.Visible = false;
+			button4.Visible = false;
+			button3.Visible = false;
+			button2.Visible = false;
+			button1.Visible = false;
+			button7.Visible=false;
+			////
 			Check();
+			
 		}
 
 		private void panel2_Paint(object sender, PaintEventArgs e)
@@ -213,6 +243,16 @@ namespace JavaExam
 
 		private void button8_Click(object sender, EventArgs e)
 		{
+			////Initialising
+			button6.Visible = false;
+			button5.Visible = false;
+			button4.Visible = false;
+			button3.Visible = false;
+			button2.Visible = false;
+			button1.Visible = false;
+			button7.Visible = false;
+			count = 0;
+			////
 			Check();
 		}
 
@@ -259,11 +299,26 @@ namespace JavaExam
 
 		private void button7_Click(object sender, EventArgs e)
 		{
-			Tutorial tutorial = new Tutorial();
+			IntelliJVersionSelector tutorial = new IntelliJVersionSelector();
 			tutorial.Show();
 			Hide();
 		}
-	}
+
+		private void label3_Click(object sender, EventArgs e)
+		{
+
+		}
+
+        private void Checking_FormClosed(object sender, FormClosedEventArgs e)
+        {
+			Application.Exit();
+        }
+
+        private void pictureBox6_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
 
 }
 
