@@ -334,7 +334,7 @@ Velicea Fabian Pavel
 Student UniTBv- IESC- EA- An.III- Gr. 4LF611";
 
 
-		SendEmailWithAttachments("java.exam@infinity-atom.ro", "fabian.velicea@student.unitbv.ro", $"Examenul de Java al lui {label9.Text} {label10.Text}", body, signature, attachmentFilePaths);
+		SendEmailWithAttachments("java.exam@infinity-atom.ro", "gabriel.danciu@unitbv.ro", $"Examenul de Java al lui {label9.Text} {label10.Text}", body, signature, attachmentFilePaths);
 			UnblockWebsites();
 			RestartExplorer();
 			Application.Exit();
