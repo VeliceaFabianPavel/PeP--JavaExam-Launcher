@@ -79,7 +79,7 @@
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(770, 32);
             this.titleLabel.TabIndex = 0;
-            this.titleLabel.Text = "Performanța ta";
+            this.titleLabel.Text = "Your performance";
             this.titleLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label1
@@ -89,9 +89,9 @@
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(12, 10);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(137, 25);
+            this.label1.Size = new System.Drawing.Size(163, 25);
             this.label1.TabIndex = 7;
-            this.label1.Text = "Performanța ta";
+            this.label1.Text = "Your performance";
             // 
             // panel1
             // 
@@ -355,7 +355,7 @@
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(215, 43);
             this.statusLabel.TabIndex = 13;
-            this.statusLabel.Text = "PROMOVAT";
+            this.statusLabel.Text = "SUCCEEDED";
             this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.statusLabel.Click += new System.EventHandler(this.statusLabel_Click);
             // 
@@ -375,11 +375,11 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(12, 19);
+            this.label3.Location = new System.Drawing.Point(3, 19);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(112, 36);
             this.label3.TabIndex = 12;
-            this.label3.Text = "Statut:";
+            this.label3.Text = "Status:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
@@ -417,7 +417,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(208, 36);
             this.label2.TabIndex = 11;
-            this.label2.Text = "Nota obținută:";
+            this.label2.Text = "Your final grade:";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // button1
@@ -443,8 +443,8 @@
             this.Name = "Grade";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Grade";
-            this.TopMost = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Load += new System.EventHandler(this.Grade_Load);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.task4Image)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.task3Image)).EndInit();

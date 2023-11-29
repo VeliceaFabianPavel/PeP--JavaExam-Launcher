@@ -35,23 +35,10 @@ namespace JavaExam
 		}
 		private void UpdateLabels()
 		{
-			string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			string filePath = Path.Combine(appDataPath, "users.txt");
-
-			List<string> lines = ReadLinesFromFile(filePath);
-
-			if (lines.Count >= 5)
-			{
-				label9.Text = lines[0];
-				label10.Text = lines[1];
-				label11.Text = lines[2];
-				label12.Text = lines[3];
-				label13.Text = lines[4];
-			}
-			else
-			{
-				MessageBox.Show("The file does not contain enough lines.");
-			}
+				label9.Text =  GlobalUser.LoggedInUser.LastName;
+				label10.Text = GlobalUser.LoggedInUser.FirstName;
+                label11.Text = GlobalUser.LoggedInUser.Faculty;
+                label13.Text = GlobalUser.LoggedInUser.Groupa; 	
 		}
 		private string path = @"C:\TaskWorker\TaskEvaluator\result.txt";
         private string grade = "";
@@ -65,14 +52,19 @@ namespace JavaExam
         private string task2F = "";
         private string task3F = "";
         private string task4F = "";
+        private string task1C = "";
+        private string task2C = "";
+        private string task3C = "";
+        private string task4C = "";
         private string status = "";
+        
 
         public ProjectSubmit()
 		{
 			InitializeComponent();
 			UpdateLabels();
-			
-			Task1Status();
+			TaskContents();
+            Task1Status();
             Task2Status();
 			Task3Status();
             Task4Status();
@@ -80,8 +72,8 @@ namespace JavaExam
             Task2Feed();
             Task3Feed();
             Task4Feed();
-			
-            string pattern = @"Grade:\s*(.*)";
+            
+			string pattern = @"Grade:\s*(.*)";
             Match match = Regex.Match(File.ReadAllText(path), pattern);
 
             if (match.Success)
@@ -171,7 +163,8 @@ namespace JavaExam
 	"www.github.com",
 	"www.tinder.com",
 	"www.viber.com",
-	"web.snapchat.com"
+	"web.snapchat.com",
+	"www.youtube.com"
 };
 		private void UnblockWebsites()
 		{
@@ -188,7 +181,41 @@ namespace JavaExam
 				MessageBox.Show("Error unblocking websites: " + ex.Message);
 			}
 		}
-		private void RestartExplorer()
+        private void UpdateTasksInDatabase()
+        {
+            int studentId = GlobalUser.LoggedInUser.StudnetId; // Note the typo in `StudnetId`. It should be `StudentId`.
+            GlobalBooking.FetchBookingByStudentId(studentId);
+			int proctorId = GlobalProctor.LoggedInProctor.ProctorId;
+            int bookingId = GlobalBooking.CurrentBooking.BookingId;
+
+            using (var context = new JavaExamContext())
+            {
+				var newTask = new Task
+				{
+					BookingId = bookingId,
+                    ExamId = 1,
+					ProctorId= proctorId,
+                    StudentId = studentId, // Assuming GlobalUser.LoggedInUser has the logged in student's details
+                    Task1Content = task1C,
+                    Task1State = task1S,
+                    Task1Explanation = task1F,
+                    Task2Content = task2C,
+                    Task2State = task2S,
+                    Task2Explanation = task2F,
+                    Task3Content = task3C,
+                    Task3State = task3S,
+                    Task3Explanation = task3F,
+                    Task4Content = task4C,
+                    Task4State = task4S ,
+                    Task4Explanation = task4F,
+                    FinalGrade = Convert.ToInt32(finalGrade)
+                };
+
+                context.Tasks.Add(newTask);
+                context.SaveChanges();
+            }
+        }
+        private void RestartExplorer()
 		{
 			try
 			{
@@ -208,6 +235,7 @@ namespace JavaExam
 				MessageBox.Show("Error restarting explorer.exe: " + ex.Message);
 			}
 		}
+
 		private void btnPrevious_Click(object sender, EventArgs e)
 		{
 
@@ -293,7 +321,7 @@ EXAMEN PROGRAMARE IN JAVA DIN DATA: {formattedDate}
 Nume Student: {label9.Text}
 Prenume Student: {label10.Text}
 Facultatea: {label11.Text}
-Specializarea: {label12.Text}
+Specializarea: x
 Grupa: {label13.Text}
 
 Nota obținută: {label16.Text}
@@ -331,13 +359,16 @@ string signature = @"
 Proiectul JavaExam
 Infinity Atom
 Velicea Fabian Pavel
-Student UniTBv- IESC- EA- An.III- Gr. 4LF611";
+Student UniTBv- IESC- TSTC- An.III- Gr. 4LF612";
 
 
-		SendEmailWithAttachments("java.exam@infinity-atom.ro", "gabriel.danciu@unitbv.ro", $"Examenul de Java al lui {label9.Text} {label10.Text}", body, signature, attachmentFilePaths);
+		SendEmailWithAttachments("java.exam@infinity-atom.ro", GlobalProctor.LoggedInProctor.Email.ToString(), $"Examenul de Java al lui {label9.Text} {label10.Text}", body, signature, attachmentFilePaths);
 			UnblockWebsites();
 			RestartExplorer();
-			Application.Exit();
+			File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\users.txt");
+            UpdateTasksInDatabase();
+			File.Delete(@"C:\TaskWorker\TaskCreator\csvFile.csv");
+            Application.Exit();
 		}
 		private void Task1Status()
 		{
@@ -427,6 +458,55 @@ Student UniTBv- IESC- EA- An.III- Gr. 4LF611";
                 task4F = match1.Groups[1].Value.Trim();
             }
         }
+        
+        private void TaskContents()
+        {
+            string task1 = "";
+            string task2 = "";
+            string task3 = "";
+            string task4 = "";
+            string path = @"C:\TaskWorker\TaskCreator\tasks.txt";
+
+
+            string pattern = @"Task 1:\s*(.*)";
+            Match match = Regex.Match(File.ReadAllText(path), pattern);
+
+            if (match.Success)
+            {
+                task1 = match.Groups[1].Value.Trim();
+            }
+
+            string pattern2 = @"Task 2:\s*(.*)";
+            Match match2 = Regex.Match(File.ReadAllText(path), pattern2);
+
+            if (match2.Success)
+            {
+                task2 = match2.Groups[1].Value.Trim();
+            }
+
+            string pattern3 = @"Task 3:\s*(.*)";
+            Match match3 = Regex.Match(File.ReadAllText(path), pattern3);
+
+            if (match3.Success)
+            {
+                task3 = match3.Groups[1].Value.Trim();
+            }
+
+            string pattern4 = @"Task 4:\s*(.*)";
+            Match match4 = Regex.Match(File.ReadAllText(path), pattern4);
+
+            if (match4.Success)
+            {
+                task4 = match4.Groups[1].Value.Trim();
+            }
+			task1C = task1;
+			task2C = task2;
+			task3C = task3;
+			task4C= task4;
+        }
+       
+        
+
         private void Status()
 		{
 

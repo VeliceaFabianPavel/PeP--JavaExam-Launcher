@@ -48,12 +48,12 @@ namespace JavaExam
             grade2 = (int)finalGrade;
             if(grade2>=5)
             {
-                statusLabel.Text = "PROMOVAT";
+                statusLabel.Text = "SUCCEEDED";
                 this.statusImage.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("ok");
             }
             else
             {
-                statusLabel.Text = "RESTANȚĂ";
+                statusLabel.Text = "FAILED";
                 this.statusImage.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("no");
             }
             string pattern1 = @"Task 1:\s*(.*)";
@@ -275,6 +275,11 @@ namespace JavaExam
         }
 
         private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Grade_Load(object sender, EventArgs e)
         {
 
         }

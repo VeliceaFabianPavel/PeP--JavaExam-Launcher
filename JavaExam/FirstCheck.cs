@@ -12,10 +12,11 @@ namespace JavaExam
 {
 	public partial class FirstCheck : Form
 	{
-		public Users Data { get; set; }
+	//	public Studenti Data { get; set; }
 		public FirstCheck()
 		{
 			InitializeComponent();
+			UpdateLabels();
             this.pictureBox1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("SplashLogo");
             this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("brandLogo");
         }
@@ -37,9 +38,40 @@ namespace JavaExam
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-			Checking checking = new Checking();
-			checking.Show();
-			Hide();
+			try
+			{
+				int studentId = GlobalUser.LoggedInUser.StudnetId; // Note the typo in `StudnetId`. It should be `StudentId`.
+				GlobalBooking.FetchBookingByStudentId(studentId);
+				int bookingId = GlobalBooking.CurrentBooking.BookingId;
+				string date = GlobalBooking.CurrentBooking.BookingDate.Date.ToString();
+				bool isBookingToday = GlobalBooking.CurrentBooking.BookingDate.Date == DateTime.Today;
+
+				if (bookingId != null)
+				{
+					if (isBookingToday == false)
+					{
+						if (MessageBox.Show($"Your exam is programmed on: {date}! You have no access to the exam, right now!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop) == DialogResult.OK)
+						{
+								Application.Exit();
+						}
+					}
+					else 
+					{ 
+					Checking checking = new Checking();
+					checking.Show();
+					Hide();
+					}
+					
+				}
+				
+			}
+			catch(System.NullReferenceException) 
+			{
+                if (MessageBox.Show($"It looks like you didn't booked your exam yet! Book your exam, and try again!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Stop) == DialogResult.OK)
+                {
+                    Application.Exit();
+                }
+            }
 		}
 
 		private void button2_Click(object sender, EventArgs e)
@@ -50,24 +82,12 @@ namespace JavaExam
 		}
 		public void UpdateLabels()
 		{
-			if (Data != null)
-			{
-				lblNume.Text = Data.LName;
-				lblPrenume.Text = Data.FName;
-				lblFacultate.Text = Data.Faculty;
-				lblSpecializare.Text = Data.Spec;
-				lblAn.Text = Data.Year;
-				lblGrupa.Text = Data.Group;
-			}
-			else
-			{
-				lblNume.Text = "NO DATA RECEIVED";
-				lblPrenume.Text = "NO DATA RECEIVED";
-				lblSpecializare.Text = "NO DATA RECEIVED";
-				lblFacultate.Text = "NO DATA RECEIVED";
-				lblAn.Text = "NO DATA RECEIVED";
-				lblGrupa.Text = "NO DATA RECEIVED";
-			}
+				lblNume.Text = GlobalUser.LoggedInUser.LastName;
+				lblPrenume.Text = GlobalUser.LoggedInUser.FirstName;
+                lblFacultate.Text = GlobalUser.LoggedInUser.Faculty;
+                
+				lblAn.Text = GlobalUser.LoggedInUser.Year;
+				lblGrupa.Text = GlobalUser.LoggedInUser.Groupa;
 		}
 		private void FirstCheck_Load(object sender, EventArgs e)
 		{

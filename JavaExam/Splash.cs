@@ -15,125 +15,156 @@ using FireSharp.Config;
 using FireSharp.Response;
 using FireSharp.Interfaces;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace JavaExam
 {
-	public partial class Splash : Form
-	{
-		private string pythonPath = @"C:\TaskWorker\TaskCreator\venv\Scripts\python.exe";
-		private string scriptPath = @"C:\TaskWorker\TaskCreator\TaskCreator.py";
-		
-		[DllImport("user32.dll", SetLastError = true)]
-		private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+    public partial class Splash : Form
+    {
+        // Path to the EXE program
+        private string exePath = @"C:\TaskWorker\TaskCreator\dist\TaskCreator\TaskCreator.exe";
 
-		[DllImport("user32.dll")]
-		private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-		private const int SW_MAXIMIZE = 3;
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-		private void MaximizeIntelliJEditorWindow()
-		{
-			IntPtr hWndIntelliJ = IntPtr.Zero;
+        [DllImport("user32.dll")]
+        public static extern uint SetWindowDisplayAffinity(IntPtr hwnd, uint dwAffinity);
 
-			while (hWndIntelliJ == IntPtr.Zero)
-			{
-				hWndIntelliJ = FindWindow("SunAwtFrame", null);
-				Thread.Sleep(500); // Wait for 0.5 seconds before checking again
-			}
+        private const int SW_MAXIMIZE = 3;
 
-			ShowWindow(hWndIntelliJ, SW_MAXIMIZE);
-		}
-
-		public Splash()
-		{
-			InitializeComponent();
-            this.Show(); // Show form
-            this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("SplashLogo");
-			RunScriptInBackground();
-			OpenIntelliJWithProject();
-		}
-		private void ShowDockerFormAndCloseSplash()
-		{
-			Docker dockerForm = new Docker();
-			dockerForm.Show();
-			Hide();
-		}
-		private void OpenIntelliJWithProject()
-		{	
-			string projectPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "JavaExam");
-			string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "IJPath.txt");
-			string textRead="";
-			try
-			{
-				textRead = File.ReadAllText(filePath);
-			}
-			catch (IOException ex)
-			{
-				Console.WriteLine(ex.Message);
-			}
-
-			ProcessStartInfo psi = new ProcessStartInfo
-			{
-				FileName = textRead,
-				Arguments = $"\"{projectPath}\"",
-				WindowStyle = ProcessWindowStyle.Maximized
-			};
-			Process.Start(psi);
-			Thread maximizeThread = new Thread(MaximizeIntelliJEditorWindow);
-			maximizeThread.Start();
-		}
-
-        private void RunScriptInBackground()
+        private void MaximizeIntelliJEditorWindow()
         {
-            Task.Run(() =>
+            IntPtr hWndIntelliJ = IntPtr.Zero;
+
+            while (hWndIntelliJ == IntPtr.Zero)
             {
-                RunPythonScript(pythonPath, scriptPath);
+                hWndIntelliJ = FindWindow("SunAwtFrame", null);
+                Thread.Sleep(500); // Wait for 0.5 seconds before checking again
+            }
+
+            ShowWindow(hWndIntelliJ, SW_MAXIMIZE);
+        }
+        public void BlockIntelliJCapture()
+        {
+            IntPtr intelliJHandle = FindWindow("SunAwtFrame", null); // You can also specify the window title if needed
+            if (intelliJHandle != IntPtr.Zero)
+            {
+                SetWindowDisplayAffinity(intelliJHandle, 1);
+            }
+        }
+        public Splash()
+        {
+            InitializeComponent();
+            this.Show(); // Show form
+            this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("jexam");
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\users.txt";
+            if (!File.Exists(path))
+            {
+                // Create a file to write to.
+                using (StreamWriter sw = File.CreateText(path))
+                {
+                    sw.WriteLine(GlobalUser.LoggedInUser.FirstName);
+                    sw.WriteLine(GlobalUser.LoggedInUser.LastName);
+                    sw.WriteLine(GlobalUser.LoggedInUser.Faculty);
+                    sw.WriteLine("x");
+                    sw.WriteLine(GlobalUser.LoggedInUser.Groupa);
+                }
+            }
+            RunExeInBackground(); // Run the EXE in the background
+            BlockIntelliJCapture();
+            OpenIntelliJWithProject();
+            
+        }
+
+        private void ShowDockerFormAndCloseSplash()
+        {
+            Docker dockerForm = new Docker();
+            dockerForm.Show();
+            Hide();
+        }
+
+        private void OpenIntelliJWithProject()
+        {
+            string projectPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "JavaExam");
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "IJPath.txt");
+            string textRead = "";
+            try
+            {
+                textRead = File.ReadAllText(filePath);
+            }
+            catch (IOException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = textRead,
+                Arguments = $"\"{projectPath}\"",
+                WindowStyle = ProcessWindowStyle.Maximized
+            };
+            Process.Start(psi);
+            Thread maximizeThread = new Thread(MaximizeIntelliJEditorWindow);
+            maximizeThread.Start();
+        }
+
+        private void RunExeInBackground()
+        {
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                RunExeProgram(exePath);
                 this.Invoke((Action)delegate {
                     Hide(); // Close splash form
-
                     Docker dockerForm = new Docker();
                     dockerForm.Show();
                 });
             });
         }
 
-        private Task<int> RunPythonScript(string pythonPath, string scriptPath)
-		{
-			TaskCompletionSource<int> tcs = new TaskCompletionSource<int>();
+        private Task<int> RunExeProgram(string exePath)
+        {
+            TaskCompletionSource<int> tcs = new TaskCompletionSource<int>();
 
-			using (Process process = new Process())
-			{
-				process.StartInfo.FileName = pythonPath;
-				process.StartInfo.Arguments = scriptPath;
-				process.StartInfo.UseShellExecute = false;
-				process.StartInfo.CreateNoWindow = true;
-				process.StartInfo.RedirectStandardOutput = true;
-				process.StartInfo.RedirectStandardError = true;
+            using (Process process = new Process())
+            {
+                process.StartInfo.FileName = exePath;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
 
-				process.EnableRaisingEvents = true;
-				process.Exited += (sender, args) =>
-				{
-					tcs.SetResult(process.ExitCode);
-					process.Dispose();
-				};
+                process.EnableRaisingEvents = true;
+                process.Exited += (sender, args) =>
+                {
+                    tcs.SetResult(process.ExitCode);
+                    process.Dispose();
+                };
 
-				process.Start();
+                process.Start();
 
-				string output = process.StandardOutput.ReadToEnd();
-				string error = process.StandardError.ReadToEnd();
-			}
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+            }
 
-			return tcs.Task;
-		}
+            return tcs.Task;
+        }
 
-		private void pictureBox2_Click(object sender, EventArgs e)
-		{
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
 
-		}
+        }
 
-		private void Splash_Load(object sender, EventArgs e)
-		{
+        private void Splash_Load(object sender, EventArgs e)
+        {
 
-		}
-	}
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
 }

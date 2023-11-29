@@ -12,103 +12,95 @@ using System.Windows.Forms;
 
 namespace JavaExam
 {
-	public partial class GiveFeedback : Form
-	{
-		private int currentTaskIndex;
-		private bool[] taskStates;
-		private string[] feedbacks;
+    public partial class GiveFeedback : Form
+    {
+        private int currentTaskIndex;
+        private List<int> tasksToFeedback;
+        private string[] feedbacks;
 
-		public GiveFeedback()
-		{
-			InitializeComponent();
-			LoadTaskStates();
-			currentTaskIndex = -1;
-			feedbacks = new string[taskStates.Length];
-			DisplayNextTask();
-		}
-		private void LoadTaskStates()
-		{
-			string taskStateFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "taskState.txt");
+        public GiveFeedback()
+        {
+            InitializeComponent();
+            LoadTaskStates();
+            currentTaskIndex = -1;
+            feedbacks = new string[tasksToFeedback.Count];
+            DisplayNextTask();
+        }
 
-			if (File.Exists(taskStateFile))
-			{
-				string[] lines = File.ReadAllLines(taskStateFile);
-				taskStates = lines.Select(x => bool.Parse(x)).ToArray();
-			}
-			else
-			{
-				MessageBox.Show("Task state file not found.");
-				taskStates = new bool[0];
-			}
-		}
+        private void LoadTaskStates()
+        {
+            tasksToFeedback = GlobalFeedback.tasks.ToList();
 
-		private void DisplayNextTask()
-		{
-			while (++currentTaskIndex < taskStates.Length)
-			{
-				if (taskStates[currentTaskIndex])
-				{
-					taskLabel.Text = $"Vă rugăm să specificați Feedback-ul pentru task-ul {currentTaskIndex + 1}";
-					lblSpec.Text = $"Conținut Task {currentTaskIndex + 1}";
+            if (tasksToFeedback.Count == 0)
+            {
+                MessageBox.Show("No tasks available for feedback.");
+            }
+        }
 
-					string pattern = $@"Task {currentTaskIndex + 1}:\s*(.*)";
-					string path = @"C:\TaskWorker\TaskCreator\tasks.txt"; // Replace with the path to your task file
+        private void DisplayNextTask()
+        {
+            while (++currentTaskIndex < tasksToFeedback.Count)
+            {
+                int taskNumber = tasksToFeedback[currentTaskIndex];
+                lblSpec.Text = $"Task {taskNumber} content";
 
-					Match match = Regex.Match(File.ReadAllText(path), pattern);
+                string pattern = $@"Task {taskNumber}:\s*(.*)";
+                string path = @"C:\TaskWorker\TaskCreator\tasks.txt";
 
-					if (match.Success)
-					{
-						taskContent.Text = match.Groups[1].Value.Trim();
-					}
+                Match match = Regex.Match(File.ReadAllText(path), pattern);
 
-					return;
-				}
-			}
+                if (match.Success)
+                {
+                    taskContent.Text = match.Groups[1].Value.Trim();
+                }
 
-			SaveFeedbacks();
-			MoveToNextForm();
-		}
+                return;
+            }
 
-		private void SaveFeedbacks()
-		{
-			string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-			string javaExamFolder = Path.Combine(desktopPath, "JavaExam");
+            SaveFeedbacks();
+            MoveToNextForm();
+        }
 
-			if (!Directory.Exists(javaExamFolder))
-			{
-				Directory.CreateDirectory(javaExamFolder);
-			}
+        private void SaveFeedbacks()
+        {
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string javaExamFolder = Path.Combine(desktopPath, "JavaExam");
 
-			for (int i = 0; i < feedbacks.Length; i++)
-			{
-				if (!string.IsNullOrWhiteSpace(feedbacks[i]))
-				{
-					File.WriteAllText(Path.Combine(javaExamFolder, $"feedback{i + 1}.txt"), feedbacks[i]);
-				}
-			}
-		}
+            if (!Directory.Exists(javaExamFolder))
+            {
+                Directory.CreateDirectory(javaExamFolder);
+            }
 
-		private void MoveToNextForm()
-		{
-			ty thankYou = new ty();
-			thankYou.Show();
-			Hide();
-		}
+            for (int i = 0; i < feedbacks.Length; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(feedbacks[i]))
+                {
+                    File.WriteAllText(Path.Combine(javaExamFolder, $"feedback{tasksToFeedback[i]}.txt"), feedbacks[i]);
+                }
+            }
+        }
 
-		private void button1_Click(object sender, EventArgs e)
-		{
-			if (currentTaskIndex >= 0 && currentTaskIndex < taskStates.Length)
-			{
-				feedbacks[currentTaskIndex] = richTextBox1.Text;
-				richTextBox1.Clear();
-			}
+        private void MoveToNextForm()
+        {
+            ty thankYou = new ty();
+            thankYou.Show();
+            Hide();
+        }
 
-			DisplayNextTask();
-		}
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (currentTaskIndex >= 0 && currentTaskIndex < tasksToFeedback.Count)
+            {
+                feedbacks[currentTaskIndex] = richTextBox1.Text;
+                richTextBox1.Clear();
+            }
 
-		private void taskContent_TextChanged(object sender, EventArgs e)
-		{
+            DisplayNextTask();
+        }
 
-		}
-	}
+        private void taskContent_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
 }

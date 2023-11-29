@@ -54,8 +54,8 @@ namespace JavaExam
 				try
 				{
 					File.WriteAllText(filePath, textToWrite);				
-					Tutorial tutorial = new Tutorial();
-					tutorial.Show();
+					ProctorLogin pl = new ProctorLogin();
+					pl.Show();
 					Hide();
 				}
 				catch (IOException ex)
@@ -80,6 +80,11 @@ namespace JavaExam
         private void IntelliJVersionSelector_FormClosed(object sender, FormClosedEventArgs e)
         {
 			Application.Exit();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

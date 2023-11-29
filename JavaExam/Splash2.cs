@@ -66,7 +66,7 @@ namespace JavaExam
 		{
 			InitializeComponent();
 			OpenIntelliJWithProject();
-            this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("SplashLogo");
+            this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("jexam");
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer
 			{
 				Interval = 5000, // 5 seconds

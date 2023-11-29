@@ -54,9 +54,9 @@
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(12, 10);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(235, 25);
+            this.label1.Size = new System.Drawing.Size(274, 25);
             this.label1.TabIndex = 5;
-            this.label1.Text = "Proiect în curs de trimitere";
+            this.label1.Text = "Project is in submitting process";
             // 
             // panel1
             // 
@@ -77,7 +77,7 @@
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.ForeColor = System.Drawing.Color.Black;
-            this.button1.Location = new System.Drawing.Point(515, 480);
+            this.button1.Location = new System.Drawing.Point(515, 493);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(243, 42);
             this.button1.TabIndex = 8;
@@ -92,7 +92,7 @@
             this.panel4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
             this.panel4.Controls.Add(this.label4);
             this.panel4.Controls.Add(this.panel5);
-            this.panel4.Location = new System.Drawing.Point(16, 227);
+            this.panel4.Location = new System.Drawing.Point(16, 240);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(742, 247);
             this.panel4.TabIndex = 7;
@@ -104,9 +104,9 @@
             this.label4.ForeColor = System.Drawing.Color.White;
             this.label4.Location = new System.Drawing.Point(12, 5);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(152, 25);
+            this.label4.Size = new System.Drawing.Size(134, 25);
             this.label4.TabIndex = 6;
-            this.label4.Text = "Feedback-ul dvs.";
+            this.label4.Text = "Your Feedback";
             // 
             // panel5
             // 
@@ -137,7 +137,7 @@
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
             this.panel2.Controls.Add(this.panel3);
             this.panel2.Controls.Add(this.lblSpec);
-            this.panel2.Location = new System.Drawing.Point(16, 77);
+            this.panel2.Location = new System.Drawing.Point(16, 90);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(742, 144);
             this.panel2.TabIndex = 5;
@@ -174,20 +174,20 @@
             this.lblSpec.ForeColor = System.Drawing.Color.White;
             this.lblSpec.Location = new System.Drawing.Point(12, 5);
             this.lblSpec.Name = "lblSpec";
-            this.lblSpec.Size = new System.Drawing.Size(141, 25);
+            this.lblSpec.Size = new System.Drawing.Size(132, 25);
             this.lblSpec.TabIndex = 6;
-            this.lblSpec.Text = "Conținut Task X";
+            this.lblSpec.Text = "Task X content";
             // 
             // taskLabel
             // 
             this.taskLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.taskLabel.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.taskLabel.Location = new System.Drawing.Point(0, 16);
+            this.taskLabel.Location = new System.Drawing.Point(0, 10);
             this.taskLabel.Name = "taskLabel";
-            this.taskLabel.Size = new System.Drawing.Size(776, 32);
+            this.taskLabel.Size = new System.Drawing.Size(776, 74);
             this.taskLabel.TabIndex = 0;
-            this.taskLabel.Text = "Vă rugăm să specificați Feedback-ul pentru Task-ul X\r\n";
+            this.taskLabel.Text = "Please write down the feedback to the tasks you marked for feedback, below:\r\n";
             this.taskLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // GiveFeedback

@@ -102,6 +102,7 @@
             this.Name = "ty";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ty";
+            this.TopMost = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.ty_Load);
             this.panel1.ResumeLayout(false);

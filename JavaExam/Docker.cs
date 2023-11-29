@@ -1,21 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Data;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Header;
 using System.Text.RegularExpressions;
-using System.Security.Cryptography.X509Certificates;
-using System.Runtime.Intrinsics.X86;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Microsoft.Win32;
-using GlobalHotKey;
+using Microsoft.IdentityModel.Tokens;
 
 namespace JavaExam
 {
@@ -46,10 +34,25 @@ namespace JavaExam
 		public int numberFeedback = 0;
 		public int numberCompleted = 0;
 		public int numberMarked = 0;
-		[DllImport("user32.dll", SetLastError = true)]
+		public string FinalPath = "";
+		public bool FeedbackOn=false;
+        public bool ReviewOn = false;
+
+        [DllImport("user32.dll")]
+        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll")]
+        public static extern uint SetWindowDisplayAffinity(IntPtr hwnd, uint dwAffinity);
+
+        [DllImport("user32.dll", SetLastError = true)]
 		private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
 		[DllImport("user32.dll", SetLastError = true)]
+
+
 		private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
 
 		private const uint SWP_NOZORDER = 0x0004;
@@ -60,7 +63,20 @@ namespace JavaExam
 		public Docker()
 		{
 			InitializeComponent();
-			CreateCsvFile(fileContent);
+            this.reviewImage1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("flag-inactive");
+            this.completedImage1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("check-inactive");
+            this.feedbackImage1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("bubble-inactive");
+            this.reviewImage2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("flag-inactive");
+            this.completedImage2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("check-inactive");
+            this.feedbackImage2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("bubble-inactive");
+            this.reviewImage3.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("flag-inactive");
+            this.completedImage3.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("check-inactive");
+            this.feedbackImage3.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("bubble-inactive");
+            this.reviewImage4.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("flag-inactive");
+            this.completedImage4.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("check-inactive");
+            this.feedbackImage4.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("bubble-inactive");
+            CreateCsvFile(fileContent);
+			File.Copy(FinalPath, @"C:\TaskWorker\TaskCreator\csvFile.csv", true);
 			selectedTask = 0;
 			LockKeys();
 			//this.brandImage .Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("brandLogo");
@@ -74,7 +90,10 @@ namespace JavaExam
 			this.FormClosed += OnFormClosed;
 			BlockWebsites(); // Add this line
 			DockAppToTop();
-			string pattern = @"Overview:(.*)";
+            this.Shown += Docker_Shown;
+			BlockIntelliJCapture();
+            SetWindowDisplayAffinity(this.Handle, 0);
+            string pattern = @"Overview:(.*)";
 			Match match = Regex.Match(File.ReadAllText(path), pattern, RegexOptions.Singleline);
 
 			if (match.Success)
@@ -91,12 +110,59 @@ namespace JavaExam
                 label4.Text = Overview;
             }
 
-            timeLeft = TimeSpan.FromMinutes(60);
+            timeLeft = TimeSpan.FromMinutes(45);
 			label1.Text = timeLeft.ToString(@"hh\:mm\:ss");
 			timer1.Start();
 		}
 
-		private void DockAppToTop()
+        const int GWL_STYLE = -16;
+        const int WS_SYSMENU = 0x80000;
+        const int WS_MINIMIZEBOX = 0x20000;
+        const int WS_MAXIMIZEBOX = 0x10000;
+        public void BlockIntelliJCapture()
+        {
+            IntPtr intelliJHandle = FindWindow("SunAwtFrame", null); // You can also specify the window title if needed
+            if (intelliJHandle != IntPtr.Zero)
+            {
+                SetWindowDisplayAffinity(intelliJHandle, 1);
+            }
+        }
+
+        public void AllowIntelliJCapture()
+        {
+            IntPtr intelliJHandle = FindWindow("SunAwtFrame", null);
+            if (intelliJHandle != IntPtr.Zero)
+            {
+                SetWindowDisplayAffinity(intelliJHandle, 0);
+            }
+        }
+        public void ControlIntelliJWindow()
+        {
+            IntPtr intelliJHandle = FindWindow(windowName, null);
+            if (intelliJHandle != IntPtr.Zero)
+            {
+                int style = GetWindowLong(intelliJHandle, GWL_STYLE);
+
+                // Remove the system menu (which contains the close option)
+                style &= ~WS_SYSMENU;
+
+                // Remove the minimize and maximize box
+                style &= ~WS_MINIMIZEBOX;
+                style &= ~WS_MAXIMIZEBOX;
+
+                SetWindowLong(intelliJHandle, GWL_STYLE, style);
+            }
+        }
+       
+        private void Docker_Shown(object sender, EventArgs e)
+        {
+            ControlIntelliJWindow();
+        }
+
+
+
+
+        private void DockAppToTop()
 		{
 			IntPtr hWndApp = FindWindow("SunAwtFrame", null);// For IntelliJ: SunAwtFrame
 			if (hWndApp != IntPtr.Zero)
@@ -194,129 +260,139 @@ namespace JavaExam
 
 		private void button8_Click(object sender, EventArgs e)
 		{
-			if (selectedTask == 0)
-				button3.BackColor = Color.White;
-			if (selectedTask == 1 && com1 == false)
+			switch(selectedTask) 
 			{
-				button4.BackColor = Color.Lime;
-				com1 = true;
-				numberCompleted++;
-			}
-			else if (selectedTask == 1 && com1 == true)
-			{
-				button4.BackColor = Color.White;
-				com1 = false;
-				numberCompleted--;
-			}
-
-			if (selectedTask == 2 && com2 == false)
-			{
-				button5.BackColor = Color.Lime;
-				com2 = true;
-				numberCompleted++;
-			}
-			else if (selectedTask == 2 && com2 == true)
-			{
-				button5.BackColor = Color.White;
-				com2 = false;
-				numberCompleted--;
-			}
-
-			if (selectedTask == 3 && com3 == false)
-			{
-				button6.BackColor = Color.Lime;
-				com3 = true;
-				numberCompleted++;
-			}
-			else if (selectedTask == 3 && com3 == true)
-			{
-				button6.BackColor = Color.White;
-				com3 = false;
-				numberCompleted--;
-			}
-
-			if (selectedTask == 4 && com4 == false)
-			{
-				button7.BackColor = Color.Lime;
-				com4 = true;
-				numberCompleted++;
-			}
-			else if (selectedTask == 4 && com4 == true)
-			{
-				button7.BackColor = Color.White;
-				com4 = false;
-				numberCompleted--;
-			}
+				case 1:
+					if (com1 == false)
+					{
+						this.completedImage1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("check-active");
+						com1 = true;
+						GlobalCompleted.tasks.Add(1);
+						break;
+					}
+					else
+					{
+                        this.completedImage1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("check-inactive");
+                        com1 = false;
+                        GlobalCompleted.tasks.Remove(1);
+                        break;
+                    }
+                
+                case 2:
+					if (com2 == false)
+					{
+						this.completedImage2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("check-active");
+						com2 = true;
+						GlobalCompleted.tasks.Add(2);
+						break;
+					}
+					else
+					{
+                        this.completedImage2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("check-inactive");
+                        com2 = false;
+                        GlobalCompleted.tasks.Remove(2);
+                        break;
+                    }
+                    
+                case 3:
+					if (com3 == false)
+					{
+						this.completedImage3.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("check-active");
+						com3 = true;
+						GlobalCompleted.tasks.Add(3);
+						break;
+					}
+					else
+					{
+                        this.completedImage3.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("check-inactive");
+                        com3 = false;
+                        GlobalCompleted.tasks.Remove(3);
+                        break;
+                    }
+					
+                case 4:
+					if (com4 == false)
+					{
+						this.completedImage4.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("check-active");
+						com4 = true;
+						GlobalCompleted.tasks.Add(4);
+						break;
+					}
+					else
+					{
+                        this.completedImage4.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("check-inactive");
+                        com4 = false;
+                        GlobalCompleted.tasks.Remove(4);
+                        break;
+                    }
+                    
+            }
 
 		}
 
 		private void button2_Click(object sender, EventArgs e)
 		{
-			if (mark1 == true || mark2 == true || mark3 == true || mark4 == true)
-			{
-				if (MessageBox.Show("There are tasks marked for review. Are you sure do you want to continue submitting the project?\nThere is no way back", "IMPORTANT INFO", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-				{
-					if (feed1 == true || feed2 == true || feed3 == true || feed4 == true)
-					{
-						string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-						string filePath = Path.Combine(appDataFolder, "taskState.txt");
-						try
-						{
-							File.WriteAllText(filePath, feed1 + "\n" + feed2 + "\n" + feed3 + "\n" + feed4);
+			if (!(GlobalFeedback.tasks.IsNullOrEmpty()) && FeedbackOn==false)
+            {
+				if (MessageBox.Show("Are you sure do you want to continue submitting the project?\nYou are going to give feedback for the questions you marked for feedback.\n\nKeep in mind that there is no way back to solve your tasks anymore if you press Yes!", "IMPORTANT INFO", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+				{	
 							GiveFeedback gf = new GiveFeedback();
-							gf.Show();
-							UnlockKeys();
+							FeedbackOn = true;
+                            gf.Show();
+                            AllowIntelliJCapture();
+                            SetWindowDisplayAffinity(this.Handle, 0);
+                            UnlockKeys();
 							LockExit = false;
-							Hide();
-						}
-						catch (IOException ex)
-						{
-							MessageBox.Show("Error writing to file:");
-							Console.WriteLine(ex.Message);
-						}
-					}
-					else
-					{
-						ty ps = new ty();
-						ps.Show();
-						UnlockKeys();
-						LockExit = false;
-						Hide();
+                    timer1.Stop();
+                    Hide();
+				}
+			}
 
-					}
-				}
-			}
-			else if((mark1==false && mark2==false && mark3==false && mark4==false) && (feed1 == true || feed2 == true || feed3 == true || feed4 == true))
-			{
-				if (MessageBox.Show("Are you sure do you want to continue submitting the project?\nThere is no way back", "IMPORTANT INFO", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (!(GlobalReview.tasks.IsNullOrEmpty()) && FeedbackOn==false)
+            {
+                if (MessageBox.Show("Are you sure do you want to continue submitting the project?\nThere are tasks that are marked for review\n\nKeep in mind that there is no way back to solve your tasks anymore if you press Yes!", "IMPORTANT INFO", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    ty gf = new ty();
+					ReviewOn=true;
+                    gf.Show();
+                    AllowIntelliJCapture();
+                    SetWindowDisplayAffinity(this.Handle, 0);
+                    UnlockKeys();
+                    LockExit = false;
+                    timer1.Stop();
+                    Hide();
+                }
+            }
+            else if (!(GlobalReview.tasks.IsNullOrEmpty()) && FeedbackOn == true)
+            {
+                if (MessageBox.Show("Are you sure do you want to continue submitting the project?\nYou are going to give feedback for the questions you marked for feedback.\n\nKeep in mind that there is no way back to solve your tasks anymore if you press Yes!", "IMPORTANT INFO", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    GiveFeedback gf = new GiveFeedback();
+                    FeedbackOn = true;
+                    gf.Show();
+                    AllowIntelliJCapture();
+                    SetWindowDisplayAffinity(this.Handle, 0);
+                    UnlockKeys();
+                    LockExit = false;
+                    timer1.Stop();
+                    Hide();
+                }
+            }
+            else if (GlobalReview.tasks.IsNullOrEmpty() && (GlobalFeedback.tasks.IsNullOrEmpty()))
 				{
-					string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-					string filePath = Path.Combine(appDataFolder, "taskState.txt");
-					try
-					{
-						File.WriteAllText(filePath, feed1 + "\n" + feed2 + "\n" + feed3 + "\n" + feed4);
-						GiveFeedback gf = new GiveFeedback();
-						UnlockKeys();
-						gf.Show();
-						LockExit = false;
-						Hide();
-					}
-					catch (IOException ex)
-					{
-						MessageBox.Show("Error writing to file:");
-						Console.WriteLine(ex.Message);
-					}
-				}
-			}
-			else
-			{
-				ty ps = new ty();
-				ps.Show();
-				UnlockKeys();
-				LockExit = false;
-				Hide();
-			}
-		}
+                if (MessageBox.Show("Are you sure do you want to continue submitting the project?", "IMPORTANT INFO", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    ty gf = new ty();
+                    gf.Show();
+                    AllowIntelliJCapture();
+                    SetWindowDisplayAffinity(this.Handle, 0);
+                    UnlockKeys();
+                    LockExit = false;
+                    timer1.Stop();
+                    Hide();
+                }
+            }
+        }
 
 		private void label3_Click(object sender, EventArgs e)
 		{
@@ -424,77 +500,30 @@ namespace JavaExam
 			{
 				timeLeft = timeLeft.Subtract(TimeSpan.FromSeconds(1));
 				label1.Text = timeLeft.ToString(@"hh\:mm\:ss");
-			}
+				if(label1.Text=="00:05:00")
+				{
+					label1.BackColor = Color.Yellow;
+					label1.ForeColor= Color.Black;
+					MessageBox.Show("5 MINUTES LEFT OF YOUR EXAM","ATTENTION",MessageBoxButtons.OK,MessageBoxIcon.Information);
+				}
+                if (label1.Text == "00:01:00")
+                {
+                    label1.BackColor = Color.Red;
+                    label1.ForeColor = Color.White;
+                    MessageBox.Show("1 MINUTE LEFT OF YOUR EXAM", "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
 			else
 			{
 				timer1.Stop();
 				label1.Text = "00:00:00";
-				MessageBox.Show("Timpul alocat desfasurarii examenului a expirat!", "INFORMATION", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				
-					if (mark1 == true || mark2 == true || mark3 == true || mark4 == true)
-					{
-						if (MessageBox.Show("There are tasks marked for review. Are you sure do you want to continue submitting the project?\nThere is no way back", "IMPORTANT INFO", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-						{
-							if (feed1 == true || feed2 == true || feed3 == true || feed4 == true)
-							{
-								string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-								string filePath = Path.Combine(appDataFolder, "taskState.txt");
-								try
-								{
-									File.WriteAllText(filePath, feed1 + "\n" + feed2 + "\n" + feed3 + "\n" + feed4);
-									GiveFeedback gf = new GiveFeedback();
-									gf.Show();
-									UnlockKeys();
-									LockExit = false;
-									Hide();
-								}
-								catch (IOException ex)
-								{
-									MessageBox.Show("Error writing to file:");
-									Console.WriteLine(ex.Message);
-								}
-							}
-							else
-							{
-								ty ps = new ty();
-								ps.Show();
-								UnlockKeys();
-								LockExit = false;
-								Hide();
-
-							}
-						}
-					}
-					else if ((mark1 == false && mark2 == false && mark3 == false && mark4 == false) && (feed1 == true || feed2 == true || feed3 == true || feed4 == true))
-						{
-					if (MessageBox.Show("Are you sure do you want to continue submitting the project?\nThere is no way back", "IMPORTANT INFO", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-					{
-						string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-						string filePath = Path.Combine(appDataFolder, "taskState.txt");
-						try
-						{
-							File.WriteAllText(filePath, feed1 + "\n" + feed2 + "\n" + feed3 + "\n" + feed4);
-							GiveFeedback gf = new GiveFeedback();
-							UnlockKeys();
-							gf.Show();
-							LockExit = false;
-							Hide();
-						}
-						catch (IOException ex)
-						{
-							MessageBox.Show("Error writing to file:");
-							Console.WriteLine(ex.Message);
-						}
-					}
-				}
-				else
-				{
-					ty ps = new ty();
-					ps.Show();
-					UnlockKeys();
-					LockExit = false;
-					Hide();
-				}
+                timeExpired ps = new timeExpired();
+                ps.Show();
+                UnlockKeys();
+                AllowIntelliJCapture();
+                SetWindowDisplayAffinity(this.Handle, 0);
+                LockExit = false;
+                Hide();
 			}
 		}
 
@@ -672,7 +701,7 @@ namespace JavaExam
 		{
 
 		}
-		static void CreateCsvFile(string inputText)
+		public void CreateCsvFile(string inputText)
 		{
 			// Extract the CSV file name
 			string csvFileNamePattern = @"CSV file:\s*(.*)";
@@ -690,7 +719,7 @@ namespace JavaExam
 			
 			string outputFilePath = Path.Combine(outputDirectory, csvFileName);	
 			File.WriteAllText(outputFilePath, csvContent);
-			
+			FinalPath= outputFilePath;
 		}
 
 		private void button3_Click(object sender, EventArgs e)
@@ -747,117 +776,143 @@ namespace JavaExam
 
 		private void button10_Click(object sender, EventArgs e)
 		{
-			if (selectedTask == 0)
-				button3.BackColor = Color.White;
-			if (selectedTask == 1 && mark1 == false)
-			{
-				button4.BackColor = Color.Red;
-				mark1 = true;
-				numberMarked++;
-			}
-			else if (selectedTask == 1 && mark1 == true)
-			{
-				button4.BackColor = Color.White;
-				mark1 = false;
-				numberMarked--;
-			}
-
-			if (selectedTask == 2 && mark2 == false)
-			{
-				button5.BackColor = Color.Red;
-				mark2 = true;
-				numberMarked++;
-			}
-			else if (selectedTask == 2 && mark2 == true)
-			{
-				button5.BackColor = Color.White;
-				mark2 = false;
-				numberMarked--;
-			}
-
-			if (selectedTask == 3 && mark3 == false)
-			{
-				button6.BackColor = Color.Red;
-				mark3 = true;
-				numberMarked++;
-			}
-			else if (selectedTask == 3 && com3 == true)
-			{
-				button6.BackColor = Color.White;
-				mark3 = false;
-				numberMarked--;
-			}
-
-			if (selectedTask == 4 && com4 == false)
-			{
-				button7.BackColor = Color.Red;
-				mark4 = true;
-				numberMarked++;
-			}
-			else if (selectedTask == 4 && com4 == true)
-			{
-				button7.BackColor = Color.White;
-				mark4 = false;
-				numberMarked--;
-			}
-		}
+            switch (selectedTask)
+            {
+                case 1:
+					if (mark1 == false)
+					{
+						this.reviewImage1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("flag-active");
+						mark1 = true;
+						GlobalReview.tasks.Add(1);
+                        break;
+                    }
+					else
+					{
+                        this.reviewImage1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("flag-inactive");
+                        mark1 = false;
+                        GlobalReview.tasks.Remove(1);
+                        break;
+                    }
+                case 2:
+                    if (mark2 == false)
+					{ 
+                    this.reviewImage2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("flag-active");
+                    mark2 = true;
+                    GlobalReview.tasks.Add(2);
+					break;
+                    }
+					else
+					{
+                    this.reviewImage2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("flag-inactive");
+                    mark2 = false;
+                    GlobalReview.tasks.Remove(2);
+                    break;
+                    }
+                    
+                case 3:
+                    if (mark3 == false)
+                    {
+                    this.reviewImage3.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("flag-active");
+                    mark3 = true;
+                    GlobalReview.tasks.Add(3);
+					break;
+                    }
+					else
+					{
+                    this.reviewImage3.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("flag-inactive");
+                    mark3 = false;
+                    GlobalReview.tasks.Remove(3);
+                    break;
+                    }
+                    
+                case 4:
+					if (mark4 == false)
+					{
+						this.reviewImage4.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("flag-active");
+						mark4 = true;
+						GlobalReview.tasks.Add(4);
+						break;
+					}
+					else
+					{
+                        this.reviewImage4.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("flag-inactive");
+                        mark4 = false;
+                        GlobalReview.tasks.Remove(4);
+                        break;
+                    }
+                    
+            }
+        }
 
 		private void button9_Click(object sender, EventArgs e)
 		{
-			if (selectedTask == 0)
-				button3.BackColor = Color.White;
-			if (selectedTask == 1 && feed1 == false)
-			{
-				button4.BackColor = Color.Cyan;
-				feed1 = true;
-				numberFeedback++;
-			}
-			else if (selectedTask == 1 && feed1 == true)
-			{
-				button4.BackColor = Color.White;
-				feed1 = false;
-				numberFeedback--;
-			}
-
-			if (selectedTask == 2 && feed2 == false)
-			{
-				button5.BackColor = Color.Cyan;
-				feed2 = true;
-				numberFeedback++;
-			}
-			else if (selectedTask == 2 && feed2 == true)
-			{
-				button5.BackColor = Color.White;
-				feed2 = false;
-				numberFeedback--;
-			}
-
-			if (selectedTask == 3 && feed3 == false)
-			{
-				button6.BackColor = Color.Cyan;
-				feed3 = true;
-				numberFeedback++;
-			}
-			else if (selectedTask == 3 && feed3 == true)
-			{
-				button6.BackColor = Color.White;
-				feed3 = false;
-				numberFeedback--;
-			}
-
-			if (selectedTask == 4 && com4 == false)
-			{
-				button7.BackColor = Color.Cyan;
-				mark4 = true;
-				numberMarked++;
-			}
-			else if (selectedTask == 4 && com4 == true)
-			{
-				button7.BackColor = Color.White;
-				mark4 = false;
-				numberMarked--;
-			}
-		}
+            switch (selectedTask)
+            {
+                case 1:
+					if (feed1 == false)
+					{
+						this.feedbackImage1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("bubble-active");
+						feed1 = true;
+						GlobalFeedback.tasks.Add(1);
+						break;
+					}
+					else
+					{
+                        this.feedbackImage1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("bubble-inactive");
+                        feed1 = false;
+                        GlobalFeedback.tasks.Remove(1);
+                        break;
+                    }
+                    
+                case 2:
+					if (feed2 == false)
+					{
+						this.feedbackImage2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("bubble-active");
+						feed2 = true;
+						GlobalFeedback.tasks.Add(2);
+						break;
+					}
+					else
+					{
+                        this.feedbackImage2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("bubble-inactive");
+                        feed2 = false;
+						GlobalFeedback.tasks.Remove(2);
+                        break;
+                    }
+                    
+                case 3:
+					if (feed3 == false)
+					{
+						this.feedbackImage3.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("bubble-active");
+						feed3 = true;
+						GlobalFeedback.tasks.Add(3);
+						break;
+					}
+                    else
+					{
+                        this.feedbackImage3.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("bubble-inactive");
+                        feed3 = false;
+                        GlobalFeedback.tasks.Remove(3);
+                        break;
+                    }
+                case 4:
+					if (feed4 == false)
+					{
+						this.feedbackImage4.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("bubble-active");
+						feed4 = true;
+						GlobalFeedback.tasks.Add(4);
+						break;
+					}
+					else
+					{
+                        this.feedbackImage4.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("bubble-inactive");
+                        feed4 = false;
+                        GlobalFeedback.tasks.Remove(4);
+                        break;
+                    }
+                    
+            }
+        }
 
 		private void Docker_FormClosing(object sender, FormClosingEventArgs e)
 		{
@@ -869,6 +924,21 @@ namespace JavaExam
 		{
 
 		}
-	}
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void feedbackImage1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void completedImage1_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
 
 }

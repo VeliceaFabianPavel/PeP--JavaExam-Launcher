@@ -58,7 +58,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label14.Text" xml:space="preserve">
-    <value>Atenție! Folderul examen, împreună cu cerințele și eventualele task-uri pentru care ai trimis feedback, vor fi trimise prin email către cadrul tău didactic. Nu uita că nota obținută este doar orientativă, și nu este finală, aceasta fiind un ajutor pentru profesor pentru evaluarea mai rapidă a lucrărilor!
+    <value>Attention! The exam folder, together with the tasks and any tasks for which you have submitted feedback, will be emailed to your teacher. Remember that the grade you get is only indicative, and not final, it is an aid to the teacher for quicker assessment!
 
 </value>
   </data>

@@ -83,11 +83,12 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI Light", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(42, 23);
+            this.label1.Location = new System.Drawing.Point(37, 27);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(593, 30);
+            this.label1.Size = new System.Drawing.Size(596, 30);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Before continuing, please enter the path for your IntelliJ instalation";
+            this.label1.Text = "Before going any further, please input the path for your IntelliJ IDE";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // IntelliJVersionSelector
             // 

@@ -13,19 +13,19 @@ namespace JavaExam
 {
     public partial class Splash4 : Form
     {
-        private string pythonPath1 = "C:\\TaskWorker\\TaskEvaluator\\venv\\Scripts\\python.exe";
-        private string scriptPath1 = "C:\\TaskWorker\\TaskEvaluator\\main.py";
+        private string exePath = @"C:\TaskWorker\TaskEvaluator\dist\main\main.exe";
+
         public Splash4()
         {
             InitializeComponent();
             this.Show();
-            this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("SplashLogo");
+            this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("jexam");
             RunScriptInBackground();
         }
         private async void RunScriptInBackground()
         {
             System.IO.Directory.SetCurrentDirectory("C:\\TaskWorker\\TaskEvaluator");
-            await Task.Run(() => RunPythonScript(pythonPath1, scriptPath1));
+            await System.Threading.Tasks.Task.Run(() => RunExeProgram(exePath));
 
             this.Invoke((Action)delegate
             {
@@ -35,12 +35,12 @@ namespace JavaExam
             });
         }
 
-        private void RunPythonScript(string pythonPath, string scriptPath)
+        private void RunExeProgram(string exePath)
         {
             using (Process process = new Process())
             {
-                process.StartInfo.FileName = pythonPath;
-                process.StartInfo.Arguments = $"\"{scriptPath}\"";  // Encase scriptPath in quotes in case of spaces in path
+                process.StartInfo.FileName = exePath;
+                // Encase scriptPath in quotes in case of spaces in path
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -73,7 +73,9 @@ namespace JavaExam
             }
         }
 
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
 
-
+        }
     }
 }

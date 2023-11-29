@@ -13,39 +13,40 @@ namespace JavaExam
 {
     public partial class Splash3 : Form
     {
-        
-        private string pythonPath = @"C:\TaskWorker\TaskParser\venv\Scripts\python.exe";
-        private string scriptPath = @"C:\TaskWorker\TaskParser\main.py";
+
+        private string exePath = @"C:\TaskWorker\TaskParser\dist\main\main.exe";
+
         public Splash3()
         {
             InitializeComponent();
             this.Show();
-            this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("SplashLogo");
+            this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("jexam");
+
             RunScriptInBackground();
         }
         private void RunScriptInBackground()
         {
-            Task.Run(() =>
+            System.Threading.Tasks.Task.Run(() =>
             {
-                RunPythonScript(pythonPath, scriptPath);
+                RunExeProgram(exePath);
                 this.Invoke((Action)delegate {
                     // Close splash form
 
                     Splash4 sp4 = new Splash4();
                     sp4.Show();
-                    Hide(); 
+                    Hide();
                 });
             });
         }
 
-        private Task<int> RunPythonScript(string pythonPath, string scriptPath)
+        private Task<int> RunExeProgram(string exePath)
         {
             TaskCompletionSource<int> tcs = new TaskCompletionSource<int>();
 
             using (Process process = new Process())
             {
-                process.StartInfo.FileName = pythonPath;
-                process.StartInfo.Arguments = scriptPath;
+                process.StartInfo.FileName = exePath;
+
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -65,6 +66,16 @@ namespace JavaExam
             }
 
             return tcs.Task;
+        }
+
+        private void Splash3_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -9,19 +9,26 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.DataFormats;
 using System.Xml.Linq;
+using System.Data.SqlClient;
+using Microsoft.VisualBasic;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace JavaExam
 {
-	public partial class LogIn : Form
-	{
-		public LogIn()
-		{
+    public partial class LogIn : Form
+    {
+        public LogIn()
+        {
 			InitializeComponent();
-			this.pictureBox1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("SplashLogo");
-			this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("brandLogo");
-		}
+            this.pictureBox1.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("SplashLogo");
+            this.pictureBox2.Image = (System.Drawing.Bitmap)Properties.Resources.ResourceManager.GetObject("brandLogo");
+        }
+		
 
-		private void button1_Click(object sender, EventArgs e)
+		public string connectionString = @"Server=tcp:licente.database.windows.net,1433;Initial Catalog=db;Persist Security Info=False;User ID=gabi;Password=Parola12;TrustServerCertificate=False;Connection Timeout=30;";
+
+
+    private void button1_Click(object sender, EventArgs e)
 		{
 
 		}
@@ -51,42 +58,46 @@ namespace JavaExam
 		}
 		private void button1_Click_1(object sender, EventArgs e)
 		{
-			if(textBox1.Text != "" && textBox2.Text != "" && comboBox1.Text != "" && textBox3.Text != "")
-			{ 
-			Users data = new Users
-			{
-				FName = textBox2.Text,
-				LName = textBox1.Text,
-				Faculty = "IESC",
-				Spec = TrimStringFromCharacter(comboBox1.Text, '('),
-				Year = "II",
-				Group = textBox3.Text
-			};
-			FirstCheck firstCheck = new FirstCheck();
-			firstCheck.Data = data;
-			firstCheck.UpdateLabels();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
 
-			string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-			string filePath = Path.Combine(appDataFolder, "users.txt");
+                string query = "SELECT * FROM Studenti WHERE Email=@Email AND Password=@Password";  // Adjust table name if needed
 
-			try
-			{
-				File.WriteAllText(filePath, data.LName + "\n" + data.FName + "\n" + data.Faculty + "\n" + data.Spec + "\n" + data.Group);
-			}
-			catch (IOException ex)
-			{
-				MessageBox.Show("Error writing to file:");
-				Console.WriteLine(ex.Message);
-			}
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Email", textBox1.Text);
+                    // Ideally, hash the password and then compare. For now, assuming plain text:
+                    command.Parameters.AddWithValue("@Password", textBox2.Text);
 
-			firstCheck.Show();
-			Hide();
-		}
-			else
-			{
-				MessageBox.Show("Nu poti lasa spatii necompletate!", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-			}
-		}
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            Studenti loggedInStudent = new Studenti
+                            {
+                                StudnetId = (int)reader["StudnetId"],
+                                ProctorId = (int)reader["ProctorId"],
+                                Email = reader["Email"].ToString(),
+                                FirstName = reader["FirstName"].ToString(),
+                                LastName = reader["LastName"].ToString(),
+                                Faculty = reader["Faculty"].ToString(),
+                                Year = reader["Year"].ToString(),
+                                Groupa = reader["Groupa"].ToString(),
+                            };
+                            GlobalUser.LoggedInUser = loggedInStudent;
+                            FirstCheck fc = new FirstCheck();
+                            fc.Show();
+                            Hide();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Invalid login credentials.");
+                        }
+                    }
+                }
+            }
+        }
 
 		private void LogIn_Load(object sender, EventArgs e)
 		{
@@ -104,6 +115,11 @@ namespace JavaExam
         }
 
         private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
         {
 
         }
